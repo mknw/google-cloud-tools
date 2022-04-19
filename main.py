@@ -7,7 +7,7 @@ def sync_devops_to_bq(*args):
 
 
 if __name__ == '__main__':
-   _token = 'ewscnbruzv4jmq4jyy557tosmqipbxnhialrm7bg2euibfqqe4yq'
+   # _token variable to be assigned from secret.
    _url = 'https://dev.azure.com/Massarius-Adtech'
 
    sync_devops_to_bq(_url, _token)
