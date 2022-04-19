@@ -13,11 +13,7 @@ def instantiate_client():
     scopes = ['https://www.googleapis.com/auth/drive', 
                    'https://www.googleapis.com/auth/bigquery'
                    ]
-    credentials = service_account.Credentials.from_service_account_file(
-        filename = _json_creds_path ,
-        scopes = scopes,
-    )
-    bq_client = bigquery.Client(credentials = credentials)
+    bq_client = bigquery.Client()
     return bq_client
 
 def load_df_to_bq(df):
@@ -37,8 +33,7 @@ def load_df_to_bq(df):
     )
     job.result()
 
-
-if __name__ == '__main__':
-    from az_devops_items import collect_work_items, auth_token, url
-    df = collect_work_items(url, auth_token)
-    load_df_to_bq(df)
+# if __name__ == '__main__':
+#     from az_devops_items import collect_work_items, auth_token, url
+#     df = collect_work_items(url, auth_token)
+#     load_df_to_bq(df)

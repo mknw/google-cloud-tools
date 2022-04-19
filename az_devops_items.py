@@ -11,7 +11,7 @@ from types import SimpleNamespace
 __VERSION__ = "0.0.1"
 
 url = 'https://dev.azure.com/Massarius-Adtech'
-auth_token = ''
+# auth_token = ''
 
 def collect_work_items(url, auth_token, verbose = False):
    # TO ADD: output_path for loggin option 
@@ -97,6 +97,5 @@ from WorkItems
 order by [System.ChangedDate] desc"""
 
 
-if __name__ == "__main__":
-   df = collect_work_items(url, auth_token, verbose = False)
-   import ipdb; ipdb.set_trace()
+# if __name__ == "__main__":
+#    df = collect_work_items(url, auth_token, verbose = False)
