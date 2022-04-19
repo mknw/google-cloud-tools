@@ -10,13 +10,12 @@ _json_creds_path = Path.home() / "code/cloud/dags/_massarius/credentials/google.
 
 def instantiate_client():
     # TODO: This process will have to be rethought for Google Cloud Function.
-    list_scopes = ['https://www.googleapis.com/auth/drive', 
+    scopes = ['https://www.googleapis.com/auth/drive', 
                    'https://www.googleapis.com/auth/bigquery'
                    ]
-
     credentials = service_account.Credentials.from_service_account_file(
         filename = _json_creds_path ,
-        scopes = list_scopes,
+        scopes = scopes,
     )
     bq_client = bigquery.Client(credentials = credentials)
     return bq_client
@@ -26,17 +25,20 @@ def load_df_to_bq(df):
 
     job_config = bigquery.LoadJobConfig(
         time_partitioning=bigquery.table.TimePartitioning(field="creation_date"),
-        write_disposition='WRITE_TRUNCATE', # if append else 'WRITE_TRUNCATE',
+        write_disposition='WRITE_TRUNCATE',
         schema=[],
     )
 
     bq_client = instantiate_client()
-    table_ref = bq_client.dataset('azure_workitems').table('adtech_workitems')
     job = bq_client.load_table_from_dataframe(
-        df, table_ref, location="eu", job_config=job_config
+        df,
+        'dev-era-184513.azure_workitems.adtech_workitems', 
+        job_config=job_config
     )
     job.result()
 
 
 if __name__ == '__main__':
+    from az_devops_items import collect_work_items, auth_token, url
+    df = collect_work_items(url, auth_token)
     load_df_to_bq(df)

@@ -8,26 +8,10 @@ import pandas as pd
 
 from types import SimpleNamespace
 
-_test = False
-
 __VERSION__ = "0.0.1"
 
-# to be removed.
-github_azure_integration_readonly_token = 'ewscnbruzv4jmq4jyy557tosmqipbxnhialrm7bg2euibfqqe4yq'
-
-test_token_test_org_allaccess = 'yglxbqkstr2j3ydtsn24kjothsl72c6dl4h32se3tgjifnsdkiga'
-
-url_tkom = 'https://dev.azure.com/Massarius-Adtech'
-url_test = 'https://dev.azure.com/masswave'
-
-if _test:
-   auth_token = test_token_test_org_allaccess
-   url = url_test
-else:
-   auth_token = github_azure_integration_readonly_token
-   url = url_tkom
-
-
+url = 'https://dev.azure.com/Massarius-Adtech'
+auth_token = ''
 
 def collect_work_items(url, auth_token, verbose = False):
    # TO ADD: output_path for loggin option 
@@ -55,7 +39,7 @@ def wiql_query(context, **kwargs):
       query=query
    )
 
-   wiql_results = wit_client.query_by_wiql(wiql, top=30).work_items
+   wiql_results = wit_client.query_by_wiql(wiql, top=100).work_items
    print("Results: {0}".format(len(wiql_results)))
    if wiql_results:
       # WIQL query gives a WorkItemReference with ID only 
@@ -65,10 +49,6 @@ def wiql_query(context, **kwargs):
       if kwargs['verbose']:
          for work_item in work_items:
             print_work_item(work_item)
-
-      # turn work_items into dataframe.
-      df = work_items_to_dataframe(work_items)
-      import ipdb; ipdb.set_trace()
       return work_items
    else:
       return []
@@ -76,9 +56,14 @@ def wiql_query(context, **kwargs):
 def work_items_to_dataframe(work_items, **kwargs):
    # 1. Initialize lists as columns for DataFrame
    work_items = list(work_items)
+   # Change dates to pd.Datetime
+   list_to_date = lambda l: [pd.to_datetime(x.split('T')[0], format=f"%Y-%m-%d") for x in l]
+
    ids = [i.id for i in work_items]
-   creation_dates = [i.fields['System.CreatedDate'].split('T')[0] for i in work_items]
-   change_dates = [i.fields['Microsoft.VSTS.Common.StateChangeDate'].split('T')[0] for i in work_items]
+
+   creation_dates = list_to_date([i.fields['System.CreatedDate'] for i in work_items])
+   change_dates = list_to_date([i.fields['Microsoft.VSTS.Common.StateChangeDate'] for i in work_items])
+
    titles = [i.fields['System.Title'] for i in work_items]
    assignees = [i.fields['System.AssignedTo']['displayName'] for i in work_items]
    base_url = 'https://dev.azure.com/Massarius-Adtech/Adtech%20Tasks/_workitems/edit/{}'
@@ -90,7 +75,7 @@ def work_items_to_dataframe(work_items, **kwargs):
 
    return pd.DataFrame({'id': ids,
                  'creation_date': creation_dates,
-                 'change_date': change_dates,
+                 'change_date': change_dates, # change dates to pd.Datetoime
                  'title': titles,
                  'assignee': assignees,
                  'url': urls,
@@ -113,4 +98,5 @@ order by [System.ChangedDate] desc"""
 
 
 if __name__ == "__main__":
-   collect_work_items(url, auth_token, verbose = False)
+   df = collect_work_items(url, auth_token, verbose = False)
+   import ipdb; ipdb.set_trace()
