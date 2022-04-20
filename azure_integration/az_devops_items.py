@@ -3,10 +3,12 @@ from azure.devops.credentials import BasicAuthentication
 from azure.devops.connection import Connection
 from azure.devops.v5_1.work_item_tracking.models import Wiql
 
+
 from utils import print_dictionary, print_work_item, pfield
 import pandas as pd
 
 from types import SimpleNamespace
+import logging
 
 __VERSION__ = "0.0.1"
 
@@ -39,7 +41,8 @@ def wiql_query(context, **kwargs):
    )
 
    wiql_results = wit_client.query_by_wiql(wiql, top=100).work_items
-   print("Results: {0}".format(len(wiql_results)))
+   n_results = len(wiql_results)
+   print("Results: {0}".format(n_results))
    if wiql_results:
       # WIQL query gives a WorkItemReference with ID only 
       work_items = (
@@ -48,6 +51,11 @@ def wiql_query(context, **kwargs):
       if kwargs['verbose']:
          for work_item in work_items:
             print_work_item(work_item)
+      else:
+         if n_results > 0:
+            logging.info(f'{n_results} Work Items successfully retrieved.')
+         else:
+            logging.warn(f'Did not find any Work Item.')
       return work_items
    else:
       return []
