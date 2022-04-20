@@ -11,7 +11,6 @@ from types import SimpleNamespace
 __VERSION__ = "0.0.1"
 
 url = 'https://dev.azure.com/Massarius-Adtech'
-# auth_token = ''
 
 def collect_work_items(url, auth_token, verbose = False):
    # TO ADD: output_path for loggin option 
