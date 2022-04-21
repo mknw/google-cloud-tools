@@ -3,7 +3,7 @@ from azure.devops.connection import Connection
 from azure.devops.v5_1.work_item_tracking.models import Wiql
 
 
-from utils import print_dictionary, print_work_item, pfield
+from utils import print_work_item, pfield
 import pandas as pd
 
 from types import SimpleNamespace
@@ -57,7 +57,7 @@ def wiql_query(context, **kwargs):
             logging.warn(f'Did not find any Work Item.')
       return work_items
    else:
-      logging.warning('No results found! Debug Azure Context.')
+      logging.warning('No results found!')
       return []
 
 def work_items_to_dataframe(work_items, **kwargs):
@@ -72,7 +72,14 @@ def work_items_to_dataframe(work_items, **kwargs):
    change_dates = list_to_date([i.fields['Microsoft.VSTS.Common.StateChangeDate'] for i in work_items])
 
    titles = [i.fields['System.Title'] for i in work_items]
-   assignees = [i.fields['System.AssignedTo']['displayName'] for i in work_items]
+   # Sometimes Work Items are not assigned yet.
+   assignees = []
+   for i in work_items:
+      try:
+         assignees.append(i.fields['System.AssignedTo']['displayName'])
+      except KeyError:
+         assignees.append(None)
+
    base_url = 'https://dev.azure.com/Massarius-Adtech/Adtech%20Tasks/_workitems/edit/{}'
    urls = [base_url.format(i.id) for i in work_items]
    states = [i.fields['System.State'] for i in work_items]
