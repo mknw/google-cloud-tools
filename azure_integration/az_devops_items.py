@@ -57,6 +57,7 @@ def wiql_query(context, **kwargs):
             logging.warn(f'Did not find any Work Item.')
       return work_items
    else:
+      logging.warning('No results found! Debug Azure Context.')
       return []
 
 def work_items_to_dataframe(work_items, **kwargs):
