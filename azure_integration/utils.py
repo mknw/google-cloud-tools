@@ -1,7 +1,3 @@
-
-from tkinter import W
-
-
 def print_dictionary(dic):
    for k, v in dic.items():
       print(k, ': ', v)

@@ -4,7 +4,6 @@ from google.oauth2 import service_account
 from pathlib import Path
 
 
-
 _json_creds_path = Path.home() / "code/cloud/dags/_massarius/credentials/google.json"
 
 

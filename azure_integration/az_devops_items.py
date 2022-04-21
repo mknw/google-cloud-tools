@@ -1,4 +1,3 @@
-
 from azure.devops.credentials import BasicAuthentication
 from azure.devops.connection import Connection
 from azure.devops.v5_1.work_item_tracking.models import Wiql
