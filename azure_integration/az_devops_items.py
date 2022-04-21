@@ -78,7 +78,7 @@ def work_items_to_dataframe(work_items, **kwargs):
       try:
          assignees.append(i.fields['System.AssignedTo']['displayName'])
       except KeyError:
-         assignees.append(None)
+         assignees.append('None')
 
    base_url = 'https://dev.azure.com/Massarius-Adtech/Adtech%20Tasks/_workitems/edit/{}'
    urls = [base_url.format(i.id) for i in work_items]
@@ -108,7 +108,8 @@ select [System.Id],
     [System.IterationPath],
     [System.Tags]
 from WorkItems
-order by [System.ChangedDate] desc"""
+where [System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold'
+order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
 
 
 # if __name__ == "__main__":
