@@ -64,7 +64,6 @@ def work_items_to_dataframe(work_items, **kwargs):
    # 1. Initialize lists as columns for DataFrame
    work_items = list(work_items)
    # Change dates to pd.Datetime
-   import ipdb; ipdb.set_trace()
    list_to_date = lambda l: [pd.to_datetime(x.split('T')[0], format=f"%Y-%m-%d") for x in l]
 
    ids = [i.id for i in work_items]
@@ -76,8 +75,9 @@ def work_items_to_dataframe(work_items, **kwargs):
 
    titles = [i.fields['System.Title'] for i in work_items]
    # Sometimes Work Items are not assigned yet.
-   assignees = [i.fields['System.AssignedTo']['displayName'] for i in work_items
-                if i.fields['System.AssignedTo']['displayName'] else 'None']
+   assignees = [i.fields['System.AssignedTo']['displayName'] 
+                if 'System.AssignedTo' in i.fields  else 'Not Assigned'
+                for i in work_items]
 
    base_url = 'https://dev.azure.com/Massarius-Adtech/Adtech%20Tasks/_workitems/edit/{}'
    urls = [base_url.format(i.id) for i in work_items]

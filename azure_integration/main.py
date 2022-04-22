@@ -18,7 +18,7 @@ def main(request, _token=None):
    logging.info(f'request json: {request.get_json()}\n')
 
    _url = 'https://dev.azure.com/Massarius-Adtech'
-   if _token is None:
+   if not _token:
       _token = os.environ.get('GITHUB_AZURE_INTEGRATION_READONLY')
    sync_devops_to_bq(_url, _token)
 
@@ -30,6 +30,6 @@ if __name__ == '__main__':
       method = 'POST'
       def get_json(self):
          return {'mockup':'json'}
-   token = 'ewscnbruzv4jmq4jyy557tosmqipbxnhialrm7bg2euibfqqe4yq'
+   token = ''
    r = Req()
    main(r, token)
