@@ -20,6 +20,7 @@ def collect_work_items(url, auth_token, verbose = False):
    context.runner_cache = SimpleNamespace()
 
    # setup the connection
+   logging.info('Creating connection to MS Azure DevOps...')
    context.connection = Connection(
       base_url=url,
       creds=BasicAuthentication('PAT', auth_token),
@@ -54,7 +55,7 @@ def wiql_query(context, **kwargs):
          if n_results > 0:
             logging.info(f'{n_results} Work Items successfully retrieved.')
          else:
-            logging.warn(f'Did not find any Work Item.')
+            logging.debug(f'Did not find any Work Item.')
       return work_items
    else:
       logging.warning('No results found!')

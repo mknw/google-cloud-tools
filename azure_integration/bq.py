@@ -30,7 +30,13 @@ def load_df_to_bq(df):
         'dev-era-184513.azure_workitems.adtech_workitems', 
         job_config=job_config
     )
-    job.result()
+    r = job.result()
+    if r.done():
+        logging.info('Data Correctly Loaded to BigQuery')
+        return 1
+    else:
+        logging.warning('BigQuery Load Job Was Not Validated.')
+        return 0
 
 # if __name__ == '__main__':
 #     from az_devops_items import collect_work_items, auth_token, url
