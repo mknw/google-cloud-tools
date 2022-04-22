@@ -2,6 +2,7 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 
 from pathlib import Path
+import logging
 
 
 _json_creds_path = Path.home() / "code/cloud/dags/_massarius/credentials/google.json"
@@ -17,6 +18,7 @@ def instantiate_client():
 
 def load_df_to_bq(df):
     # Load to bigQuery
+    n_entries = df.shape[0]
 
     job_config = bigquery.LoadJobConfig(
         time_partitioning=bigquery.table.TimePartitioning(field="creation_date"),
@@ -32,7 +34,10 @@ def load_df_to_bq(df):
     )
     r = job.result()
     if r.done():
-        logging.info('Data Correctly Loaded to BigQuery')
+        if n_entries == r.output_rows:
+            logging.info(f'{r.output_rows} Data Points Correctly Loaded to BigQuery')
+        else:
+            logging.warning(f'DataFrame with {n_entries} entries, but loaded {r.output_rows} to BigQuery.')
         return 1
     else:
         logging.warning('BigQuery Load Job Was Not Validated.')
