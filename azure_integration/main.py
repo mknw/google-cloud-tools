@@ -6,6 +6,8 @@ import logging
 from flask import Request
 import functions_framework
 
+logging.basicConfig(level=logging.DEBUG)
+
 def sync_devops_to_bq(*args):
    work_items_df = collect_work_items(*args)
    load_df_to_bq(work_items_df)
