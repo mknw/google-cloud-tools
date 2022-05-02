@@ -108,7 +108,7 @@ select [System.Id],
     [System.IterationPath],
     [System.Tags]
 from WorkItems
-where [System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold'
+where ([System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold')
 order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
 
 

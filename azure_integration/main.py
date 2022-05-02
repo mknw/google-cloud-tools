@@ -48,7 +48,7 @@ if __name__ == '__main__':
    class Req():
       method = 'POST'
       def get_json(self):
-         return {'mockup':'json'}
+         return {'name':'Jason'}
    token = ''
    r = Req()
    main(r, token)
