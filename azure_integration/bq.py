@@ -29,7 +29,7 @@ def load_df_to_bq(df):
     bq_client = instantiate_client()
     job = bq_client.load_table_from_dataframe(
         df,
-        'dev-era-184513.azure_workitems.adtech_workitems', 
+        'dev-era-184513.azure_workitems.analysis_workitems', 
         job_config=job_config
     )
     r = job.result()
