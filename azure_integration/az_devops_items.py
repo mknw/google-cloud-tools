@@ -1,17 +1,17 @@
-
 from azure.devops.credentials import BasicAuthentication
 from azure.devops.connection import Connection
 from azure.devops.v5_1.work_item_tracking.models import Wiql
 
-from utils import print_dictionary, print_work_item, pfield
+
+from utils import print_work_item
 import pandas as pd
 
 from types import SimpleNamespace
+import logging
 
 __VERSION__ = "0.0.1"
 
 url = 'https://dev.azure.com/Massarius-Adtech'
-auth_token = ''
 
 def collect_work_items(url, auth_token, verbose = False):
    # TO ADD: output_path for loggin option 
@@ -20,6 +20,7 @@ def collect_work_items(url, auth_token, verbose = False):
    context.runner_cache = SimpleNamespace()
 
    # setup the connection
+   logging.info('Creating connection to MS Azure DevOps...')
    context.connection = Connection(
       base_url=url,
       creds=BasicAuthentication('PAT', auth_token),
@@ -40,7 +41,8 @@ def wiql_query(context, **kwargs):
    )
 
    wiql_results = wit_client.query_by_wiql(wiql, top=100).work_items
-   print("Results: {0}".format(len(wiql_results)))
+   n_results = len(wiql_results)
+   print("Results: {0}".format(n_results))
    if wiql_results:
       # WIQL query gives a WorkItemReference with ID only 
       work_items = (
@@ -49,8 +51,14 @@ def wiql_query(context, **kwargs):
       if kwargs['verbose']:
          for work_item in work_items:
             print_work_item(work_item)
+      else:
+         if n_results > 0:
+            logging.info(f'{n_results} Work Items successfully retrieved.')
+         else:
+            logging.debug(f'Did not find any Work Item.')
       return work_items
    else:
+      logging.warning('No results found!')
       return []
 
 def work_items_to_dataframe(work_items, **kwargs):
@@ -60,12 +68,18 @@ def work_items_to_dataframe(work_items, **kwargs):
    list_to_date = lambda l: [pd.to_datetime(x.split('T')[0], format=f"%Y-%m-%d") for x in l]
 
    ids = [i.id for i in work_items]
-
-   creation_dates = list_to_date([i.fields['System.CreatedDate'] for i in work_items])
-   change_dates = list_to_date([i.fields['Microsoft.VSTS.Common.StateChangeDate'] for i in work_items])
+   # # Keep Time in order to correctly fetch the last item changed. We can show 
+   # creation_dates = list_to_date([i.fields['System.CreatedDate'] for i in work_items])
+   # change_dates = list_to_date([i.fields['Microsoft.VSTS.Common.StateChangeDate'] for i in work_items])
+   creation_dates = pd.to_datetime([i.fields['System.CreatedDate'] for i in work_items])
+   change_dates = pd.to_datetime([i.fields['Microsoft.VSTS.Common.StateChangeDate'] for i in work_items])
 
    titles = [i.fields['System.Title'] for i in work_items]
-   assignees = [i.fields['System.AssignedTo']['displayName'] for i in work_items]
+   # Sometimes Work Items are not assigned yet.
+   assignees = [i.fields['System.AssignedTo']['displayName'] 
+                if 'System.AssignedTo' in i.fields  else 'Not Assigned'
+                for i in work_items]
+
    base_url = 'https://dev.azure.com/Massarius-Adtech/Adtech%20Tasks/_workitems/edit/{}'
    urls = [base_url.format(i.id) for i in work_items]
    states = [i.fields['System.State'] for i in work_items]
@@ -85,6 +99,11 @@ def work_items_to_dataframe(work_items, **kwargs):
 
 
 
+## IMPORTANT ##
+# Follow:
+# https://docs.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax
+# If you want to modify the query below.
+
 query="""
 select [System.Id],
     [System.WorkItemType],
@@ -94,9 +113,9 @@ select [System.Id],
     [System.IterationPath],
     [System.Tags]
 from WorkItems
-order by [System.ChangedDate] desc"""
+where (([System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold') OR ([Microsoft.VSTS.Common.ClosedDate] >= @Today-14)) AND ([System.AreaPath] under 'Analysis Tasks')
+order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
 
-
-if __name__ == "__main__":
-   df = collect_work_items(url, auth_token, verbose = False)
-   import ipdb; ipdb.set_trace()
+# Testing snippet:
+# if __name__ == "__main__":
+#    df = collect_work_items(url, auth_token, verbose = False)

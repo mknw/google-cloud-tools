@@ -4,7 +4,8 @@ import os
 import logging
 import functions_framework
 
-logging.basicConfig(level=logging.DEBUG)
+# get rid of all those pesky DEBUG level logs. 
+logging.basicConfig(level=logging.INFO)
 
 def sync_devops_to_bq(*args):
    work_items_df = collect_work_items(*args)
@@ -47,7 +48,9 @@ def main(request, _token=None):
 if __name__ == '__main__':
    class Req():
       method = 'POST'
-      def get_json(self):
+      headers = {'content-type': 'application/json'}
+      def get_json(self, **kwargs):
+         print(*kwargs)
          return {'name':'Jason'}
    token = ''
    r = Req()
