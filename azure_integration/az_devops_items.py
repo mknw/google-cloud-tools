@@ -99,6 +99,11 @@ def work_items_to_dataframe(work_items, **kwargs):
 
 
 
+## IMPORTANT ##
+# Follow:
+# https://docs.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax
+# If you want to modify the query below.
+
 query="""
 select [System.Id],
     [System.WorkItemType],
@@ -111,6 +116,6 @@ from WorkItems
 where (([System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold') OR ([Microsoft.VSTS.Common.ClosedDate] >= @Today-14)) AND ([System.AreaPath] under 'Analysis Tasks')
 order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
 
-
+# Testing snippet:
 # if __name__ == "__main__":
 #    df = collect_work_items(url, auth_token, verbose = False)

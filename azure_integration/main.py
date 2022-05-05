@@ -1,4 +1,3 @@
-from tkinter import W
 from az_devops_items import collect_work_items
 from bq import load_df_to_bq
 import os
