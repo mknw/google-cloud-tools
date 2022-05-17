@@ -1,0 +1,6 @@
+[submodule "continuous-deployment-on-kubernetes"]
+	path = continuous-deployment-on-kubernetes
+	url = https://github.com/GoogleCloudPlatform/continuous-deployment-on-kubernetes.git
+[submodule "solutions-terraform-jenkins-gitops"]
+	path = solutions-terraform-jenkins-gitops
+	url = https://github.com/mknw/solutions-terraform-jenkins-gitops
