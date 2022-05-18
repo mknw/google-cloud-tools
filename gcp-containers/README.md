@@ -1,34 +1,43 @@
-# How to deploy a k8s cluster with gcloud-cli and terraform
+# Infrastructure configuration
 
-First a main.tf file is needed. Look at the file and [here](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started#configuring-the-provider) to find a description of the parameters.
+Or: *How to deploy a k8s cluster with gcloud-cli and terraform*.
 
-The last part will be an authorization part to be configured. 
+To perform these changes, you will need: 
 
-But first, a service account with the right kinds of permissions needs to be created. 
-A service account is needed for the cluster to initiate and manage different functionalities for the cluster to work.
+- GCP account
+- GCP project (with billing enabled)
+- kubectl (? check)
 
-## Adding credentials
+The following instructions have been tested on a machine supporting [WSL2](https://docs.microsoft.com/en-us/windows/wsl/install).
 
-If a service account isn't created, follow [this guide](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) to issue one.
+## Google Cloud
 
-Make sure the necessary permissions are provided.
-For the terraform-cloud@ornate-reef-xxxxxx service account, the following permissions were worked:
+Install [gcloud-cli](https://cloud.google.com/sdk/docs/install). Then type in your terminal:
 
-- Compute Instance Admin (Beta);
-- Service Networking Service Agent
+```gcloud init```
 
-One then needs to download the key file from [the service account page](https://console.cloud.google.com/projectselector2/iam-admin/serviceaccounts?supportedpurview=project) by first selecting the right project and then creating or downloading a key for that account.
+and press Enter. 
 
-Once the key file has been downloaded to a safe, private directory (not synced with any external service), export the environment variable:
+<!-- Add here: 
+1. how to add service account
+2. give the right permissions (least priviledge access principle).
+3. Download json file for service account [see this guide](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
+   Once the key file has been downloaded to a safe, private directory (not synced with any external service), export the environment variable:
+4. export env variable.
+   ```
+   export GOOGLE_APPLICATION_CREDENTIALS=PATH
+   ```
+-->
 
-```
-export GOOGLE_APPLICATION_CREDENTIALS=PATH
-```
+## Terraform
 
-where `PATH` is the filepath of the key file.
-You can avoid typing this every time by adding it at the end of your `.bashrc` or `.zshenv`.
+Before continuing the setup, it is recommended to go (or at least *read*) through the [GCP Terraform tutorial](https://learn.hashicorp.com/collections/terraform/gcp-get-started).
+This takes 30 minutes top and will enable one to better understand the HCL (*Hashicorp Configuration Language*) syntax, necessary to declare the infrastructure to deploy.
 
-## Validating terraform plan
+1. verify that the variables defined in `terraform.tfvars` are as intended.
+2. verify that default settings in `variables.tf` are as intended.
+
+### Validating terraform plan
 
 Initialize terraform with `terraform init`.
 
