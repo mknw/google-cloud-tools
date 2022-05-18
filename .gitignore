@@ -1,6 +1,6 @@
 # Terraform files 
-.terraform.tfstate
-.terraform.tfstate.bak
+terraform.tfstate
+terraform.tfstate.backup
 .terraform
 .terraform.lock.hcl
 gcp-containers/.creds
