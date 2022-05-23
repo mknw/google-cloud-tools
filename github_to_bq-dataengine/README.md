@@ -37,7 +37,63 @@ We add the query parameters by adjusting the field and value of the desired para
 
 ## Python 
 
+### Fetch the Issues from the API
 Lookup the [requests](https://docs.python-requests.org) library. It will explain how to implement [custom headers](https://docs.python-requests.org/en/latest/user/quickstart/#custom-headers) for the version definition, providing [parameters](https://docs.python-requests.org/en/latest/user/quickstart/#custom-headers) for the `per_page` field and [basic authentication](https://2.python-requests.org/en/master/user/authentication/#basic-authentication).
 
 Once implemented <!-- add link to repo >
-we can focus on data wrangling.
+we can focus on data wrangling. The json payload needs to be formatted in a way that Pandas understand. This enables us to:
+
+1. ensure the structure of data is homogeneous across data points.
+2. check wether data types for each dimensions / metric are correct, and
+3. use the `load_table_from_dataframe` method of the bigquery client.
+
+### Load the data to BigQuery
+
+[Create a BigQuery Dataset](https://cloud.google.com/bigquery/docs/datasets#create-dataset) to store the data:
+
+```
+CREATE SCHEMA `dev-era-184513.github_issues`
+OPTIONS(
+  description="Open Github issues from the `massarius/cloud` repository updated weekly.",
+  labels=[('org_unit', 'devops'), ('team', 'data')]
+)
+```
+
+Then the table: 
+
+```
+CREATE TABLE  `dev-era-184513.github_sync.dataengine_issues`
+(html_url                          STRING,
+number                             INT64,
+title                              STRING,
+user_login                         STRING,
+user_avatar_url                    STRING,
+labels_name                        STRING,
+state                              STRING,
+assignee_login                     STRING,
+assignee_avatar_url                STRING,
+milestone                          STRING,
+comments                           INT64,
+created_at                         DATETIME,
+updated_at                         DATETIME,
+reactions_laugh                    INT64,
+reactions_hooray                   INT64,
+reactions_confused                 INT64,
+reactions_heart                    INT64,
+reactions_rocket                   INT64,
+reactions_eyes                     INT64
+)
+OPTIONS(
+  description = 'Contains open tickets from repository Massarius/cloud on Github.'
+)
+```
+
+## Google Cloud Functions
+
+In this section it will be explained:
+
+1. Save the Github Personal Access Token (PAT) that you previously used in Google Cloud Console with the appropriate Google Secret Manager.
+2. Load the Google Cloud Function with gcloud-cli tools, making the PAT (secret token) available.
+3. Testing the function.
+
+
