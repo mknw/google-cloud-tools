@@ -5,16 +5,17 @@ import pandas as pd
 # $ curl -i -u Massarius:$github_token   -H "Accept: application/vnd.github.v3+json" \
 # "https://api.github.com/repos/massarius/cloud/issues?per_page=100"
 
-def get_issues(token=None):
-   payload = {'per_page': 100}
+def get_open_issues(token=None, params=None):
+   if not params:
+      params = {'per_page': 100}
+
    headers = {'Accept': 'applications/vnd.github.v3+json'}
    r = requests.get('https://api.github.com/repos/massarius/cloud/issues',
-                     params=payload, 
+                     params=params, 
                      headers=headers,
                      auth=('Massarius', token))
 
    df = pd.DataFrame(clean_issues(r.json()))
-   
    # convert to right dtype
    df[['created_at', 'updated_at']] = df[['created_at', 'updated_at']].apply(pd.to_datetime)
    # df[['html_url', 'title', 'user_avatar_url', 'labels_name', 'state', 'assignee_login', 'assignee_avatar_url', 'milestone']] = df[
@@ -48,6 +49,12 @@ def clean_issue_dimensions(issue, keys=None, dict_keys=None):
    Turn dictionaries from the format: 
 
    '''
+   # TODO: 
+   # if value == 'label_names': ','.join(dict['label_names'])
+
+   # row['prio'] = extract_prio(label_names)
+   # row['other labels'] = extract_remaining_labels(label_names)
+
    row = dict()
    for k, v in issue.items():
       if k in keys:
@@ -78,13 +85,23 @@ def clean_issue_dimensions(issue, keys=None, dict_keys=None):
             else:
                list_of_values = []
                for sub_dictionary in v:
-                  for kk, v in sub_dictionary.items():
+                  for kk, vv in sub_dictionary.items():
                      if kk in nested:
                         try:
-                           list_of_values.append(v)
+                           list_of_values.append(vv)
                         except TypeError as te:
                            print('list of tuples: ', te)
-               row[f'{k}_{nested}'] = list_of_values
+               # does the list contain a word with priority in it?
+               priority_idx = [i for i, x in enumerate(list_of_values) if 'prio' in x.lower()]
+               if priority_idx:
+                  row['prio'] = list_of_values.pop(priority_idx[0])
+               else:
+                  row['prio'] = ''
+               if not list_of_values:
+                  # if no other labels were assigned:
+                  row[f'{k}_{nested}'] = ''
+               else:
+                  row[f'{k}_{nested}'] = ', '.join(list_of_values)
    return row
 
 

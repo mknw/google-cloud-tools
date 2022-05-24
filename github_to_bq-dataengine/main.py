@@ -3,7 +3,7 @@ import logging
 import functions_framework
 
 from bq import load_df_to_bq
-from github_issues import get_issues
+from github_issues import get_open_issues
 from github_issues import get_env_vars
 
 
@@ -16,7 +16,7 @@ def issues_to_bq(_token):
    else:
       env_vars = {'token': _token}
       
-   df = get_issues(**env_vars) 
+   df = get_open_issues(**env_vars) 
    if df.empty:
       logging.warning('No Fetched Data from Github.')
    else:
@@ -26,8 +26,8 @@ def issues_to_bq(_token):
 
 @functions_framework.http
 def main(request, _token=None):
-   logging.info(f'====Request====:\n')
-   logging.info(f'Request method: {request.method}\n')
+   req_str = '====Request====:\nRequest method: {}\n'
+   logging.info(req_str.format(request.method))
 
    '''just some boilerplate to test the function working request.'''
    content_type = request.headers['content-type']
@@ -38,6 +38,7 @@ def main(request, _token=None):
             print(f'name: {name}')
         else:
             logging.warning("JSON is invalid, or missing a 'name' property")
+            logging.error(f'Payload: {request_json}')
    elif content_type == 'application/octet-stream':
         name = request.data
    elif content_type == 'text/plain':
