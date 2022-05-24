@@ -6,6 +6,9 @@ from bq import load_df_to_bq
 from github_issues import get_issues
 from github_issues import get_env_vars
 
+
+logging.basicConfig(level=logging.DEBUG)
+
 def issues_to_bq(_token):
    
    if not _token:
@@ -56,6 +59,5 @@ if __name__ == '__main__':
       headers['content-type'] = 'application/json'
       def get_json(self, **kwargs):
          return {'mockup':'json', 'name': 'johnny'}
-   token = ''
    r = Req()
    main(r)

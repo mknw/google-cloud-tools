@@ -1,7 +1,5 @@
-from tkinter import W
 import requests
 import pandas as pd
-import ipdb
 
 # Perform the request as performed from terminal with:
 # $ curl -i -u Massarius:$github_token   -H "Accept: application/vnd.github.v3+json" \

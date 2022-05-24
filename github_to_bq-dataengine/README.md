@@ -92,8 +92,42 @@ OPTIONS(
 
 In this section it will be explained:
 
+0. Testing the GCF locally.
 1. Save the Github Personal Access Token (PAT) that you previously used in Google Cloud Console with the appropriate Google Secret Manager.
 2. Load the Google Cloud Function with gcloud-cli tools, making the PAT (secret token) available.
 3. Testing the function.
+
+### Testing
+
+In order to test the function, one way is to provide credentials for a service account which performs the operation through the Python API. In order to do this, we can simply provide the Environment Variable `GOOGLE_APPLICATION_CREDENTIALS` setting to the path of the json file for the desired service account.
+
+Simply type `export GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"` in your terminal. A json configuration file is already used in the cloud repo (dags/_massarius/credentials) for the ms-method service account, so you can use that one. 
+
+This enables your code to avoid inline authentication, allowing it to be unchanged in the version uploaded as Cloud Function on GCP.
+
+After setting the path, activate the virtual environment where the necessary packages are installed. Run `python main.py` to start the process. Once the script has run, make sure to check on BigQuery to ensure the data was uploaded.
+
+If everything was performed correctly, we can save dependencies for the GCF as requirements.txt with: `pip freeze > requirements.txt`. This file will be used by GCP to import the appropriate set of libraries.
+
+
+### Deploying
+
+Once the secret is saved, a bucket needs to be created to store the source code. 
+Make sure the right project is selected on gcloud with `gcloud config get project`. A list of available projects can be obtained with `gcloud list projects`, while setting the right project can be done with `gcloud config set project <project_name>`. 
+
+Create the bucket with `gcloud mb -l europe-west2 gs://<bucket-name>`.
+
+While in your working directory, run: 
+
+```
+ gcloud functions deploy NAME --region=europe-west2 \
+--entry-point=main --memory=256MB --runtime=python38 \
+--stage-bucket=gs://BUCKET_NAME \
+--set-secrets=GITHUB_MASSARIUS_PAT=github-massarius-account-pat:latest --trigger-http
+```
+
+This will upload the code in the `pwd` to GCP.
+Next, a scheduler job needs to be setup in order to call the GCF when needed. 
+
 
 
