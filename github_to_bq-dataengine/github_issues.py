@@ -81,7 +81,7 @@ def clean_issue_dimensions(issue, keys=None, dict_keys=None):
             nested = nested_keys[0]
             if not v:
                # for those instances where v is None
-               row[f'{k}_{nested}'] = v
+               row[f'{k}_{nested}'] = None
             else:
                list_of_values = []
                for sub_dictionary in v:
@@ -96,10 +96,10 @@ def clean_issue_dimensions(issue, keys=None, dict_keys=None):
                if priority_idx:
                   row['prio'] = list_of_values.pop(priority_idx[0])
                else:
-                  row['prio'] = ''
+                  row['prio'] = None
                if not list_of_values:
                   # if no other labels were assigned:
-                  row[f'{k}_{nested}'] = ''
+                  row[f'{k}_{nested}'] = None
                else:
                   row[f'{k}_{nested}'] = ', '.join(list_of_values)
    return row

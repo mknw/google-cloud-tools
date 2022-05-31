@@ -7,7 +7,7 @@ from github_issues import get_open_issues
 from github_issues import get_env_vars
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 def issues_to_bq(_token):
    
