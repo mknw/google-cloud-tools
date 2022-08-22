@@ -1,3 +1,6 @@
+# configuration files:
+.env.yaml
+
 # Terraform files 
 terraform.tfstate
 terraform.tfstate.backup

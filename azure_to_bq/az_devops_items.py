@@ -11,13 +11,13 @@ import logging
 
 __VERSION__ = "0.0.1"
 
-url = 'https://dev.azure.com/Massarius-Adtech'
 
-def collect_work_items(url, auth_token, verbose = False):
+def collect_work_items(url, query, auth_token, verbose = False):
    # TO ADD: output_path for loggin option 
 
    context = SimpleNamespace()
    context.runner_cache = SimpleNamespace()
+   context.query = query
 
    # setup the connection
    logging.info('Creating connection to MS Azure DevOps...')
@@ -33,11 +33,10 @@ def collect_work_items(url, auth_token, verbose = False):
 
 
 
-
 def wiql_query(context, **kwargs):
    wit_client = context.connection.clients.get_work_item_tracking_client()
    wiql = Wiql(
-      query=query
+      query=context.query
    )
 
    wiql_results = wit_client.query_by_wiql(wiql, top=100).work_items
@@ -99,17 +98,10 @@ def work_items_to_dataframe(work_items, **kwargs):
 
 
 
-query="""
-select [System.Id],
-    [System.WorkItemType],
-    [System.Title],
-    [System.State],
-    [System.AreaPath],
-    [System.IterationPath],
-    [System.Tags]
-from WorkItems
-where [System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold'
-order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
+## IMPORTANT ##
+# Follow:
+# https://docs.microsoft.com/en-us/azure/devops/boards/queries/wiql-syntax
+# If you want to modify the query below.
 
 
 # if __name__ == "__main__":

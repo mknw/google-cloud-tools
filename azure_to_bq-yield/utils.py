@@ -1,3 +1,6 @@
+from pathlib import Path 
+from typing import Union
+
 def print_dictionary(dic):
    for k, v in dic.items():
       print(k, ': ', v)
@@ -33,3 +36,12 @@ def pfield(work_item, field_name):
    except KeyError:
       print(f'{field_name} not found. Returning None.')
       return None
+
+def read_env(fn: Union[str, Path]):
+   import yaml
+	if isinstance(fn, Path):
+		fn = str(fn)
+	with open(fn, 'r') as stream:
+		out = yaml.safe_load(stream)
+
+	return out

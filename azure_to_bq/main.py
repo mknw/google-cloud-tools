@@ -7,7 +7,9 @@ import functions_framework
 # get rid of all those pesky DEBUG level logs. 
 logging.basicConfig(level=logging.INFO)
 
-query="""
+# in its original configuration, this query was performed
+# to sync the Yield team to BigQuery (and relative Data Studio dashboard).
+query_yield = """
 select [System.Id],
     [System.WorkItemType],
     [System.Title],
@@ -17,6 +19,20 @@ select [System.Id],
     [System.Tags]
 from WorkItems
 where (([System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold') OR ([Microsoft.VSTS.Common.ClosedDate] >= @Today-14)) AND ([System.AreaPath] under 'Analysis Tasks')
+order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
+
+# in its original configuration, this query was performed
+# to sync the Adtech team to BigQuery (and relative Data Studio dashboard).
+query_adtech = """
+select [System.Id],
+    [System.WorkItemType],
+    [System.Title],
+    [System.State],
+    [System.AreaPath],
+    [System.IterationPath],
+    [System.Tags]
+from WorkItems
+where [System.State] contains 'Open' OR [System.State] contains 'Waiting' OR [System.State] contains 'On Hold'
 order by [Microsoft.VSTS.Common.Priority] asc, [System.ChangedDate] desc"""
 
 

@@ -64,3 +64,4 @@ watchdog==1.0.2
 wcwidth==0.2.5
 Werkzeug==2.1.1
 zipp==3.8.0
+PyYAML==6.0

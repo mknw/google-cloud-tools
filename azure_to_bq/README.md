@@ -2,6 +2,14 @@
 
 This repo directory contains code to be deployed as a Google Cloud Function synchronising Azure DevOps work items to BigQuery. 
 
+## How to deploy the google function
+
+First, the creation of a bucket is needed within GCP. This repository will hold the contents of your function. 
+
+```
+gsutil mb gs://BUCKET_NAME
+```
+
 The function can be deployed as follows:
 
 ```
