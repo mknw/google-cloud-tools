@@ -101,7 +101,7 @@ In this section it will be explained:
 
 In order to test the function, one way is to provide credentials for a service account which performs the operation through the Python API. In order to do this, we can simply provide the Environment Variable `GOOGLE_APPLICATION_CREDENTIALS` setting to the path of the json file for the desired service account.
 
-Simply type `export GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"` in your terminal. A json configuration file is already used in the cloud repo (dags/_massarius/credentials) for the ms-method service account, so you can use that one. 
+Simply type `export GOOGLE_APPLICATION_CREDENTIALS="path/to/credentials.json"` in your terminal. At massarius, a json configuration file is already used in the cloud repo configuration (dags/_massarius/credentials) for the ms-method service account, so you can use that one. 
 
 This enables your code to avoid inline authentication, allowing it to be unchanged in the version uploaded as Cloud Function on GCP.
 

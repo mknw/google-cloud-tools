@@ -125,6 +125,8 @@ def get_env_vars():
          text = l.strip().split('=')
          assert len(text) == 2
          env_vars[text[0]] = text[1]
+   if 'token' not in env_vars:
+      raise ValueError('Expected `token` in .env file, but not found.')
    return env_vars
 
 if __name__ == '__main__':

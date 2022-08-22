@@ -5,6 +5,7 @@ from pathlib import Path
 import logging
 
 
+# This json file should be downloaded from your GCP project Service Account manager dashboard.
 _json_creds_path = Path.home() / "code/cloud/dags/_massarius/credentials/google.json"
 
 
